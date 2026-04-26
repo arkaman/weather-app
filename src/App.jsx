@@ -4,6 +4,7 @@ import Input from "./components/Input";
 import LocationAndTime from "./components/LocationAndTime";
 import SunriseSunset from "./components/SunriseSunset";
 import ForecastPanel from "./components/ForecastPanel";
+import TipsFeature from "./components/TipsFeature";
 import { getWeatherByCity, getForecastByCity } from "./services/weatherApi";
 import { formatForecast } from "./utils/forecastUtils";
 import { getDayPhase } from "./utils/dayNightUtils";
@@ -13,14 +14,19 @@ function App() {
   const [weather, setWeather] = useState(null);
   const [forecast, setForecast] = useState([]);
   const [error, setError] = useState("");
+  const [forecastRaw, setForecastRaw] = useState([]);
 
   const handleSearch = async (city) => {
     try {
       setError("");
+
       const weatherData = await getWeatherByCity(city);
       const forecastData = await getForecastByCity(city);
 
       setWeather(weatherData);
+
+      setForecastRaw(forecastData.list);
+
       setForecast(formatForecast(forecastData.list, weatherData.timezone));
     } catch (err) {
       setError(err.message);
@@ -85,6 +91,11 @@ function App() {
               <SunriseSunset weather={weather} />
             </div>
           </div>
+        )}
+
+        {/* Tips Feature */}
+        {weather && forecastRaw.length > 0 && (
+          <TipsFeature weather={weather} forecast={forecastRaw} />
         )}
 
         {/* Forecast */}
