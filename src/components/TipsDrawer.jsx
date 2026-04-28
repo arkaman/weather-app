@@ -2,7 +2,7 @@ import TipCard from "./TipCard";
 
 export default function TipsDrawer({ tips, loading }) {
     return (
-        <div className="drawer drawer-end">
+        <div className="drawer">
             <input id="tips-drawer" type="checkbox" className="drawer-toggle" />
 
             <div className="drawer-content" />
@@ -11,7 +11,7 @@ export default function TipsDrawer({ tips, loading }) {
                 <label htmlFor="tips-drawer" className="drawer-overlay"></label>
 
                 <div className="bg-base-200 min-h-full w-80 p-4 flex flex-col gap-4 overflow-y-auto">
-                    <h2 className="text-lg font-bold">AI Weather Tips</h2>
+                    <h2 className="text-lg font-bold text-center">AI Weather Tips</h2>
 
                     {loading && (
                         <div className="flex items-center gap-2">
