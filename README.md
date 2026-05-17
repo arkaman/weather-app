@@ -14,6 +14,7 @@
 - **Dynamic theming** — background shifts between day and night modes based on sun position
 - **AI-powered weather tips** — contextual suggestions generated using the Gemini API
 - **Glassmorphism-inspired UI**, fully responsive across all screen sizes
+- **Smooth UI animations** powered by Framer Motion with staggered transitions and animated weather panels
 
 ---
 
@@ -32,6 +33,8 @@ This project uses a separate backend service for handling API requests and AI pr
 | React 19        | UI & component architecture               |
 | Vite            | Fast dev server & build tooling           |
 | Tailwind CSS    | Utility-first styling & responsive design |
+| DaisyUI         | Prebuilt Tailwind UI components           |
+| Framer Motion   | Smooth animations & transitions           |
 | Lucide Icons    | Lightweight, consistent iconography       |
 | OpenWeather API | Real-time weather & forecast data         |
 | Gemini API      | AI-generated weather tips & insights      |
