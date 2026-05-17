@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import WeatherCard from "./components/WeatherCard";
 import Input from "./components/Input";
 import LocationAndTime from "./components/LocationAndTime";
@@ -35,6 +36,33 @@ function App() {
 
   const dayPhase = getDayPhase(weather); // "day" | "night"
 
+  const containerVariants = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: {
+      opacity: 0,
+      y: 20,
+      transition: {
+        duration: 0.3,
+      },
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
   return (
     <div className="relative min-h-screen w-full font-primary">
       {/* Night background */}
@@ -70,40 +98,71 @@ function App() {
 
 
         {/* Weather Info */}
-        {weather && (
-          <div
-            className="
-              flex flex-col lg:flex-row
-              justify-center lg:justify-between
-              items-center lg:items-stretch
-              gap-6 px-4 sm:px-6 lg:px-12 mt-6
-              mb-10 md:mb-16 lg:mb-0
-            "
-          >
-            {/* WeatherCard */}
-            <div className="w-full max-w-md md:max-w-xl min-h-full">
-              <WeatherCard weather={weather} />
-            </div>
+        <AnimatePresence mode="wait">
+          {weather && (
+            <motion.div
+              key={`${weather.name}-${weather.dt}`}
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              className="
+                flex flex-col lg:flex-row
+                justify-center lg:justify-between
+                items-center lg:items-stretch
+                gap-6 px-4 sm:px-6 lg:px-12 mt-6
+                mb-10 md:mb-16 lg:mb-0
+              "
+            >
+              {/* WeatherCard */}
+              <motion.div
+                variants={itemVariants}
+                className="w-full max-w-md md:max-w-xl min-h-full"
+              >
+                <WeatherCard weather={weather} />
+              </motion.div>
 
-            {/* Right Column */}
-            <div className="flex flex-col w-full max-w-md flex-1 lg:justify-between gap-6 md:max-w-xl">
-              <LocationAndTime weather={weather} />
-              <SunriseSunset weather={weather} />
-            </div>
-          </div>
-        )}
+              {/* Right Column */}
+              <motion.div
+                variants={containerVariants}
+                className="flex flex-col w-full max-w-md flex-1 lg:justify-between gap-6 md:max-w-xl"
+              >
+                <motion.div
+                  variants={itemVariants}
+                >
+                  <LocationAndTime weather={weather} />
+                </motion.div>
+                
+                <motion.div
+                  variants={itemVariants}
+                >
+                  <SunriseSunset weather={weather} />
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Tips Feature */}
         {weather && forecastRaw.length > 0 && (
           <TipsFeature weather={weather} forecast={forecastRaw} />
         )}
 
-        {/* Forecast */}
-        {forecast.length > 0 && (
-          <div className="px-4 sm:px-6 lg:px-12">
-            <ForecastPanel forecast={forecast} />
-          </div>
-        )}
+        {/* Forecast Panel */}
+        <AnimatePresence mode="wait">
+          {forecast.length > 0 && (
+            <motion.div
+              key={weather?.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5 }}
+              className="px-4 sm:px-6 lg:px-12"
+            >
+              <ForecastPanel forecast={forecast} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
