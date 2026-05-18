@@ -28,6 +28,9 @@ export default function TipsFeature({ weather, forecast }) {
             }
 
             const payload = {
+                city: {
+                    name: weather.name
+                },
                 list: todayList.map(item => ({
                     dt_txt: item.dt_txt,
                     main: {
