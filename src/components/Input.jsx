@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { useState } from "react";
 
-const Input = ({ onSearch }) => {
+const Input = ({ onSearch, loading }) => {
     const [city, setCity] = useState("");
 
     const handleSubmit = (e) => {
@@ -14,9 +14,14 @@ const Input = ({ onSearch }) => {
     return (
         <form role="search" onSubmit={handleSubmit} className="flex justify-center">
             <div className="flex w-full max-w-md items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 rounded-2xl bg-white/10 backdrop-blur-md shadow-lg">
-                <Search className="w-4 h-4 sm:w-5 sm:h-5 text-amber-50 shrink-0" />
+                {loading ? (
+                    <span className="loading loading-spinner loading-sm text-amber-50 shrink-0"></span>
+                ) : (
+                    <Search className="w-4 h-4 sm:w-5 sm:h-5 text-amber-50 shrink-0" />
+                )}
 
                 <input
+                    disabled={loading}
                     type="text"
                     placeholder="Search city..."
                     value={city}
@@ -26,9 +31,10 @@ const Input = ({ onSearch }) => {
 
                 <button
                     type="submit"
+                    disabled={loading}
                     className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl cursor-pointer text-sm sm:text-base bg-indigo-500 text-white hover:bg-indigo-600 active:scale-95 transition shrink-0"
                 >
-                    Go
+                    {loading ? "Searching..." : "Search"}
                 </button>
             </div>
 

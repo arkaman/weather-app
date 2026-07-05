@@ -21,6 +21,7 @@ function App() {
   const [forecast, setForecast] = useState([]);
   const [error, setError] = useState("");
   const [forecastRaw, setForecastRaw] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -60,6 +61,7 @@ function App() {
 
   const handleSearch = async (city) => {
     try {
+      setLoading(true);
       setError("");
 
       const weatherData = await getWeatherByCity(city);
@@ -68,6 +70,8 @@ function App() {
       updateWeather(weatherData, forecastData);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -130,7 +134,7 @@ function App() {
       <div className="relative z-10 flex flex-col min-h-screen pt-6 md:pt-10 justify-between">
         {/* Search */}
         <div className="px-4 sm:px-6 lg:px-12">
-          <Input onSearch={handleSearch} />
+          <Input onSearch={handleSearch} loading={loading} />
           {error && <p className="text-red-500 text-center mt-2">{error}</p>}
         </div>
 
