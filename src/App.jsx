@@ -23,6 +23,22 @@ function App() {
   const [forecastRaw, setForecastRaw] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const fetchWeather = async (fetchWeatherFn, fetchForecastFn) => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const weatherData = await fetchWeatherFn();
+      const forecastData = await fetchForecastFn();
+
+      updateWeather(weatherData, forecastData);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleCurrentLocation = () => {
     if (!navigator.geolocation) {
       setError("Geolocation is not supported.");
@@ -30,24 +46,11 @@ function App() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      async ({ coords }) => {
-        try {
-          setError("");
-
-          const weatherData = await getWeatherByCoords(
-            coords.latitude,
-            coords.longitude
-          );
-
-          const forecastData = await getForecastByCoords(
-            coords.latitude,
-            coords.longitude
-          );
-
-          updateWeather(weatherData, forecastData);
-        } catch (err) {
-          setError(err.message);
-        }
+      ({ coords }) => {
+        fetchWeather(
+          () => getWeatherByCoords(coords.latitude, coords.longitude),
+          () => getForecastByCoords(coords.latitude, coords.longitude)
+        );
       },
       () => {
         setError("Location permission denied.");
@@ -59,20 +62,11 @@ function App() {
     handleCurrentLocation();
   }, []);
 
-  const handleSearch = async (city) => {
-    try {
-      setLoading(true);
-      setError("");
-
-      const weatherData = await getWeatherByCity(city);
-      const forecastData = await getForecastByCity(city);
-
-      updateWeather(weatherData, forecastData);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  const handleSearch = (city) => {
+    fetchWeather(
+      () => getWeatherByCity(city),
+      () => getForecastByCity(city)
+    );
   };
 
   const updateWeather = (weatherData, forecastData) => {
