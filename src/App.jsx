@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import WeatherCard from "./components/WeatherCard";
 import Input from "./components/Input";
@@ -6,7 +6,12 @@ import LocationAndTime from "./components/LocationAndTime";
 import SunriseSunset from "./components/SunriseSunset";
 import ForecastPanel from "./components/ForecastPanel";
 import TipsFeature from "./components/TipsFeature";
-import { getWeatherByCity, getForecastByCity } from "./services/weatherApi";
+import {
+  getWeatherByCity,
+  getForecastByCity,
+  getWeatherByCoords,
+  getForecastByCoords,
+} from "./services/weatherApi";
 import { formatForecast } from "./utils/forecastUtils";
 import { getDayPhase } from "./utils/dayNightUtils";
 import EmptyState from "./components/EmptyState";
@@ -17,6 +22,42 @@ function App() {
   const [error, setError] = useState("");
   const [forecastRaw, setForecastRaw] = useState([]);
 
+  const handleCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        try {
+          setError("");
+
+          const weatherData = await getWeatherByCoords(
+            coords.latitude,
+            coords.longitude
+          );
+
+          const forecastData = await getForecastByCoords(
+            coords.latitude,
+            coords.longitude
+          );
+
+          updateWeather(weatherData, forecastData);
+        } catch (err) {
+          setError(err.message);
+        }
+      },
+      () => {
+        setError("Location permission denied.");
+      }
+    );
+  };
+
+  useEffect(() => {
+    handleCurrentLocation();
+  }, []);
+
   const handleSearch = async (city) => {
     try {
       setError("");
@@ -24,14 +65,18 @@ function App() {
       const weatherData = await getWeatherByCity(city);
       const forecastData = await getForecastByCity(city);
 
-      setWeather(weatherData);
-
-      setForecastRaw(forecastData.list);
-
-      setForecast(formatForecast(forecastData.list, weatherData.timezone));
+      updateWeather(weatherData, forecastData);
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const updateWeather = (weatherData, forecastData) => {
+    setWeather(weatherData);
+    setForecastRaw(forecastData.list);
+    setForecast(
+      formatForecast(forecastData.list, weatherData.timezone)
+    );
   };
 
   const dayPhase = getDayPhase(weather); // "day" | "night"
