@@ -10,7 +10,7 @@ const EmptyState = () => {
             <Search className="w-10 h-10 mb-4 opacity-70" strokeWidth={2.5} />
 
             <h2 className="text-xl sm:text-2xl font-light tracking-wide">
-                Search a city to explore the weather
+                Enable location permission or search a city to explore the weather
             </h2>
 
             <p className="text-sm opacity-70 mt-2">
